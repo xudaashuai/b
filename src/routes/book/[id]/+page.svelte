@@ -243,7 +243,7 @@ function nextChapter() {
   {/if}
   <ReaderControl
     on:move={(e) => {
-      if ((diffX > 0 && isOkToNextPage) || (diffX < 0 && isOkToPreviousPage)) {
+      if ((e.detail > 0 && isOkToNextPage) || (e.detail < 0 && isOkToPreviousPage)) {
         diffX = e.detail;
       }
     }}
