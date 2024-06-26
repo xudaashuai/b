@@ -27,7 +27,6 @@ let showMenu: boolean = false;
 let modalType: string = '';
 
 function handlePageClick(event: MouseEvent) {
-  console.log(123);
   const { clientX, clientY } = event;
   const { innerWidth, innerHeight } = window;
 

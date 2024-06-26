@@ -46,6 +46,7 @@ let showNextAnimation = false;
 let showPreviousAnimation = false;
 $: isOkToNextPage = (displayPages[2]?.length ?? 0) !== 0;
 $: isOkToPreviousPage = (displayPages[0]?.length ?? 0) !== 0;
+
 function startGoNextPage() {
   if (isOkToNextPage) {
     showNextAnimation = true;
@@ -98,43 +99,6 @@ async function updateDisplayPages() {
   await Promise.all([buildChapterPages($lastRead[0] - 2), buildChapterPages($lastRead[0] + 2)]);
 }
 
-async function getChapterContent(chapter: IChapter) {
-  if (isRemoteBook) {
-    return (await fetchChapter(chapter, $bookStore.source))?.content ?? '';
-  } else {
-    return chapter.content;
-  }
-}
-
-async function preloadAllPages() {
-  let c = currentChapterNumber;
-  for (let i = 0; i <= 3; i++) {
-    let chapter = $chaptersStore[c + i];
-    if (chapter) {
-      allPages[c + i] = ReaderLayoutService.exec(await getChapterContent(chapter), chapter.title);
-    }
-    chapter = $chaptersStore[c - i];
-    if (chapter) {
-      allPages[c - i] = ReaderLayoutService.exec(await getChapterContent(chapter), chapter.title);
-    }
-  }
-  updateDisplayPages();
-  if (!isRemoteBook) {
-    for (let i = 0; c + i < $chaptersStore.length || c - i >= 0; i++) {
-      setTimeout(() => {
-        let chapter = $chaptersStore[c + i];
-        if (chapter) {
-          allPages[c + i] = ReaderLayoutService.exec(chapter.content, chapter.title);
-        }
-        chapter = $chaptersStore[c - i];
-        if (chapter) {
-          allPages[c - i] = ReaderLayoutService.exec(chapter.content, chapter.title);
-        }
-      }, 0);
-    }
-  }
-}
-
 lastRead.subscribe((val) => {
   localStorage.setItem(`${data.bookId}-lastReaded`, val.join('-'));
 });
@@ -152,7 +116,7 @@ onDestroy(() => {
 });
 const handleSettingsUpdate = debounce((value: ReaderLayoutOptions) => {
   ReaderLayoutService.updateOptions(value);
-  preloadAllPages();
+  updateDisplayPages();
 }, 100);
 
 settingsStore.subscribe(handleSettingsUpdate);
