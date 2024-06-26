@@ -35,5 +35,6 @@ import { settingsStore, styleSettingsStore } from '../store/settings';
 
 .container {
   font-family: Noto Sans;
+  overflow: hidden;
 }
 </style>
