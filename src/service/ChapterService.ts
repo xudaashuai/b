@@ -3,13 +3,13 @@ import {
   getChapterByBookIdAndChapterNumber,
   getChaptersByBookId
 } from '../db/ChapterStore';
-import { BookSourceType, type IChapter, type ISimpleChapter } from '../db/types';
+import { BookSourceType, type IChapter } from '../db/types';
 import { DataStrategyFactory } from './dataStrategy';
 const globalCache: {
   [key: string]: Promise<IChapter> | undefined;
 } = {};
 export async function fetchChapter(
-  simpleChpater: ISimpleChapter,
+  simpleChpater: IChapter,
   sourceType: BookSourceType
 ): Promise<IChapter | undefined> {
   const chapterFromDB = await getChapterByBookIdAndChapterNumber(

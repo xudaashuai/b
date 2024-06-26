@@ -23,5 +23,3 @@ export interface IChapter {
   content: string; // 章节内容
   length?: number; // 章节内容长度
 }
-
-export type ISimpleChapter = Omit<IChapter, 'content'>;

@@ -1,8 +1,8 @@
-import { BookSourceType, type IBook, type IChapter, type ISimpleChapter } from '../../db/types';
+import { BookSourceType, type IBook, type IChapter } from '../../db/types';
 import remoteDataFecther from './remoteDataFetcher';
 
 interface DataStrategy {
-  fetchChapter(simpleChpater: ISimpleChapter): Promise<IChapter>;
+  fetchChapter(simpleChpater: IChapter): Promise<IChapter>;
   fetchChapterContents(bookId: string): Promise<IChapter[]>;
   fetchBook(bookId: string): Promise<IBook>;
 }

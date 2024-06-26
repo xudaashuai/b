@@ -3,7 +3,7 @@ import ReaderPage from '../../../components/FeatureSpecific/ReaderPage.svelte';
 
 import { onDestroy, onMount, setContext } from 'svelte';
 import { fetchChapter, fetchChapters } from '../../../service/ChapterService';
-import { BookSourceType, type IBook, type IChapter, type ISimpleChapter } from '../../../db/types';
+import { BookSourceType, type IBook, type IChapter } from '../../../db/types';
 import type { PageData } from './$types.js';
 import ReaderLayoutService, {
   type ILayoutLine,

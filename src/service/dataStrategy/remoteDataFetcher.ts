@@ -1,7 +1,7 @@
-import { BookSourceType, type IBook, type IChapter, type ISimpleChapter } from '../../db/types';
+import { BookSourceType, type IBook, type IChapter } from '../../db/types';
 import type { DataStrategy } from '.';
 
-async function fetchChapterContent(chapter: ISimpleChapter): Promise<IChapter> {
+async function fetchChapterContent(chapter: IChapter): Promise<IChapter> {
   let pageNumber = 1;
   let content = '';
   let title = '';

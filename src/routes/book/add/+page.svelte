@@ -4,7 +4,7 @@ import { addBook, updateBook } from '../../../db/BookStore';
 import { addChapter } from '../../../db/ChapterStore';
 import remoteDataFecther from '../../../service/dataStrategy/remoteDataFetcher';
 import { processAndStoreFile } from '../../../service/FileProcessingService';
-let url = '';
+let url = 'https://m.xbiqugew.com/book/';
 function handleFileChange(event: any) {
   const file = event?.target.files[0];
   console.log(file);
