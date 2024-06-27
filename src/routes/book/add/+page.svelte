@@ -2,9 +2,11 @@
 import { goto } from '$app/navigation';
 import { addBook, updateBook } from '../../../db/BookStore';
 import { addChapter } from '../../../db/ChapterStore';
-import remoteDataFecther from '../../../service/dataStrategy/remoteDataFetcher';
+import { ConfigurableScraper } from '../../../service/dataStrategy/remote';
+import config from '../../../service/dataStrategy/remote/config/biquge';
 import { processAndStoreFile } from '../../../service/FileProcessingService';
-let url = 'https://m.xbiqugew.com/book/';
+let url = '45525';
+const BiquegeScraper = new ConfigurableScraper(config);
 function handleFileChange(event: any) {
   const file = event?.target.files[0];
   console.log(file);
@@ -23,13 +25,9 @@ function handleFileChange(event: any) {
 }
 
 async function importRemoteBook() {
-  const bookId = url.replace(/https:\/\/m.xbiqugew.com\/book\/(\d+)\//, '$1');
-  if (!bookId) {
-    console.log('no bookid');
-  }
-  const book = await remoteDataFecther.fetchBook(bookId);
-  await addBook(book);
-  const contents = await remoteDataFecther.fetchChapterContents(book.id);
+  const book = await BiquegeScraper.fetchBook(url);
+  await updateBook(book);
+  const contents = await BiquegeScraper.fetchChapterList(book.id);
   for (const item of contents) {
     await addChapter(item);
   }

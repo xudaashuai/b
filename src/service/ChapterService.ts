@@ -6,7 +6,7 @@ import {
 import { BookSourceType, type IChapter } from '../db/types';
 import { DataStrategyFactory } from './dataStrategy';
 const globalCache: {
-  [key: string]: Promise<IChapter> | undefined;
+  [key: string]: Promise<string> | undefined;
 } = {};
 export async function fetchChapter(
   simpleChpater: IChapter,
@@ -22,15 +22,17 @@ export async function fetchChapter(
   if (chapterFromDB.content) {
     return chapterFromDB;
   }
-  if (globalCache[simpleChpater.id]) {
-    return globalCache[simpleChpater.id];
-  }
   const strategy = DataStrategyFactory.getStrategy(sourceType);
-  const promise = strategy.fetchChapter(chapterFromDB);
+  const promise =
+    globalCache[simpleChpater.id] || strategy.fetchChapter(chapterFromDB.bookId, chapterFromDB.id);
+
   globalCache[simpleChpater.id] = promise;
-  const chapterFromStrategy = await promise;
-  addChapter(chapterFromStrategy);
-  return chapterFromStrategy;
+  const contentFromStrategy = {
+    ...chapterFromDB,
+    content: await promise
+  };
+  addChapter(contentFromStrategy);
+  return contentFromStrategy;
 }
 
 export async function fetchChapters(bookId: string): Promise<IChapter[]> {
