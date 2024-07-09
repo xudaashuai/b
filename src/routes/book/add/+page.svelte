@@ -2,11 +2,11 @@
 import { goto } from '$app/navigation';
 import { addBook, updateBook } from '../../../db/BookStore';
 import { addChapter } from '../../../db/ChapterStore';
+import { getScraper } from '../../../service/dataStrategy';
 import { ConfigurableScraper } from '../../../service/dataStrategy/remote';
 import config from '../../../service/dataStrategy/remote/config/biquge';
 import { processAndStoreFile } from '../../../service/FileProcessingService';
 let url = '45525';
-const BiquegeScraper = new ConfigurableScraper(config);
 function handleFileChange(event: any) {
   const file = event?.target.files[0];
   console.log(file);
@@ -25,9 +25,11 @@ function handleFileChange(event: any) {
 }
 
 async function importRemoteBook() {
-  const book = await BiquegeScraper.fetchBook(url);
+  const scraper = getScraper(url);
+  const bookId = scraper.getBookId(url);
+  const book = await scraper.fetchBook(bookId);
   await updateBook(book);
-  const contents = await BiquegeScraper.fetchChapterList(book.id);
+  const contents = await scraper.fetchChapterList(book.id);
   for (const item of contents) {
     await addChapter(item);
   }

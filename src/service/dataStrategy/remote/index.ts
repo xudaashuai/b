@@ -5,10 +5,17 @@ import { getTextWithNewlines } from './utils';
 const PROXY_BASE_URL = `https://api.xudashuai.online/?url=`;
 const parser = new DOMParser();
 export class ConfigurableScraper {
-  private config: ScraperConfig;
+  config: ScraperConfig;
 
   constructor(config: ScraperConfig) {
     this.config = config;
+  }
+
+  getBookId(url: string) {
+    const params = {
+      baseUrl: this.config.endpoints.baseUrl
+    };
+    return url.replace(RegExp(render(this.config.bookIdReg, params)), '$1');
   }
 
   static buildUrl(template: string, params: any) {
@@ -38,9 +45,11 @@ export class ConfigurableScraper {
     }
   }
 
-  static async fetchHtml(url: string): Promise<Document> {
+  async fetchHtml(url: string): Promise<Document> {
     console.log('fetchHtml start', url);
-    const response = await (await fetch(PROXY_BASE_URL + url)).json();
+    const response = await (
+      await fetch(PROXY_BASE_URL + url + '&charset=' + this.config.charset)
+    ).json();
     console.log('fetchHtml end', url, response);
     return parser.parseFromString(response.html, 'text/html');
   }
@@ -54,7 +63,7 @@ export class ConfigurableScraper {
     };
     const url = ConfigurableScraper.buildUrl(config.template, params);
 
-    const doc = await ConfigurableScraper.fetchHtml(url);
+    const doc = await this.fetchHtml(url);
     const bookDetails: IRemoteBook = {
       id: bookId,
       title:
@@ -89,13 +98,15 @@ export class ConfigurableScraper {
     const chapters: IChapter[] = [];
     let chapterNumber = 0;
     while (url) {
-      const doc = await ConfigurableScraper.fetchHtml(url);
+      const doc = await this.fetchHtml(url);
       const chapterElements =
         ConfigurableScraper.querySelectorAll(doc, config.linkSelector, templateParams) || [];
       for (const element of chapterElements) {
         const link = element.getAttribute('href') || '';
         chapters.push({
-          id: (link || '').replace(RegExp(render(config.linkIdReg, templateParams)), '$1'),
+          id: [
+            ...(link || '').matchAll(RegExp(render(config.linkIdReg, templateParams), 'g'))
+          ][0][1],
           title: element.textContent || '',
           content: '',
           bookId: bookId,
@@ -136,7 +147,7 @@ export class ConfigurableScraper {
     };
     let url = ConfigurableScraper.buildUrl(config.template, templateParams);
     while (url) {
-      const doc = await ConfigurableScraper.fetchHtml(url);
+      const doc = await this.fetchHtml(url);
       const node = ConfigurableScraper.querySelector(
         doc,
         config.chapterContentSelector,
@@ -166,6 +177,8 @@ export class ConfigurableScraper {
 }
 export interface ScraperConfig {
   name: string;
+  charset: string;
+  bookIdReg: string;
   endpoints: {
     baseUrl: string;
     bookInfo: {

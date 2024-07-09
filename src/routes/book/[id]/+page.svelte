@@ -3,7 +3,7 @@ import ReaderPage from '../../../components/FeatureSpecific/ReaderPage.svelte';
 
 import { onDestroy, onMount, setContext } from 'svelte';
 import { fetchChapter, fetchChapters } from '../../../service/ChapterService';
-import { type IBook, type IChapter } from '../../../db/types';
+import { type IBook, type IChapter, type IRemoteBook } from '../../../db/types';
 import type { PageData } from './$types.js';
 import ReaderLayoutService, {
   type ILayoutLine,
@@ -65,7 +65,11 @@ async function buildChapterPages(index: number): Promise<ILayoutLine[][]> {
     return [];
   }
   if (!$chaptersStore[index].content) {
-    const chapter = await fetchChapter($chaptersStore[index], $bookStore.source);
+    const chapter = await fetchChapter(
+      $chaptersStore[index],
+      $bookStore.source,
+      ($bookStore as IRemoteBook).remoteUrl
+    );
     if (chapter) {
       $chaptersStore[index] = chapter;
     }

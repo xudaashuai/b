@@ -10,7 +10,8 @@ const globalCache: {
 } = {};
 export async function fetchChapter(
   simpleChpater: IChapter,
-  sourceType: BookSourceType
+  sourceType: BookSourceType,
+  remoteUrl: string
 ): Promise<IChapter | undefined> {
   const chapterFromDB = await getChapterByBookIdAndChapterNumber(
     simpleChpater.bookId,
@@ -22,7 +23,7 @@ export async function fetchChapter(
   if (chapterFromDB.content) {
     return chapterFromDB;
   }
-  const strategy = DataStrategyFactory.getStrategy(sourceType);
+  const strategy = DataStrategyFactory.getStrategy(sourceType, remoteUrl);
   const promise =
     globalCache[simpleChpater.id] || strategy.fetchChapter(chapterFromDB.bookId, chapterFromDB.id);
 

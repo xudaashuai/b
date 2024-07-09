@@ -6,6 +6,10 @@ export interface IReaderStyleOptions {
   nextPageArea: number;
 }
 
+export enum Fonts {
+  Noto = 'Noto Sans'
+}
+
 export const defaultReaderStyleOptions = {
   color: '#000000',
   bgColor: '#ffffff',
@@ -14,6 +18,11 @@ export const defaultReaderStyleOptions = {
 const settingsStore = writable<ReaderLayoutOptions>(
   localStorage.getItem('settings') ? JSON.parse(localStorage.getItem('settings')!) : defaultOptions
 );
+
+settingsStore.subscribe((val) => {
+  localStorage.setItem('settings', JSON.stringify(val));
+});
+
 const styleSettingsStore = writable<IReaderStyleOptions>(
   localStorage.getItem('style-settings')
     ? JSON.parse(localStorage.getItem('style-settings')!)

@@ -1,4 +1,5 @@
 {
+  "editor.formatOnSave": true,
   "svelte.plugin.svelte.compilerWarnings": {
     "a11y-aria-attributes": "ignore",
     "a11y-incorrect-aria-attribute-type": "ignore",

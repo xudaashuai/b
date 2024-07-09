@@ -2,6 +2,8 @@ import type { ScraperConfig } from '..';
 
 const config: ScraperConfig = {
   name: '笔趣阁',
+  bookIdReg: '<%- baseUrl %>book/(\\d+)/',
+  charset: 'gbk',
   endpoints: {
     baseUrl: 'https://m.xbiqugew.com/',
     bookInfo: {

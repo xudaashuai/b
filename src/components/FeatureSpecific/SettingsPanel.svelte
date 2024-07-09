@@ -1,5 +1,5 @@
 <script lang="ts">
-import { nightModeStore, settingsStore, styleSettingsStore } from '../../store/settings';
+import { Fonts, nightModeStore, settingsStore, styleSettingsStore } from '../../store/settings';
 import ColorPicker from 'svelte-awesome-color-picker';
 
 import RangeSelect from '../UI/RangeSelect.svelte';
@@ -93,9 +93,13 @@ const settings: {
     />
     <div>{$styleSettingsStore.nextPageArea}</div>
   </div>
-  <div class="item" class:dark={$nightModeStore}>
+  <div class="item">
     <div>字体</div>
-    <div>{$settingsStore.fontFamily}</div>
+    <select bind:value={$settingsStore.fontFamily}>
+      {#each Object.entries(Fonts) as font}
+        <option value={font[1]}> {font[1]} </option>
+      {/each}
+    </select>
   </div>
   <div class="item" class:dark={$nightModeStore}>
     <div>字体颜色</div>

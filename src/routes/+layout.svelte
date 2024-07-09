@@ -20,6 +20,7 @@ import { settingsStore, styleSettingsStore } from '../store/settings';
     --title-weight:${$settingsStore.titleWeight};
     color:${$styleSettingsStore.color};
     background-color:${$styleSettingsStore.bgColor};
+    --font:${$settingsStore.fontFamily};
     height: 100vh;
   `}
   class="container"
@@ -34,7 +35,7 @@ import { settingsStore, styleSettingsStore } from '../store/settings';
 }
 
 .container {
-  font-family: Noto Sans;
+  font-family: var(--font);
   overflow-y: hidden;
 }
 </style>
