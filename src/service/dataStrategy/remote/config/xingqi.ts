@@ -25,8 +25,9 @@ const config: ScraperConfig = {
     },
     chapterContent: {
       //https://www.xingqiwx.com/xs/1558/424909.html
-      template: '<%- baseUrl %>xs/<%- bookId %>/<%- chapterId %>.html',
-      nextPageSelector: 'a[href*="<%- chapterId %>_<%- pageNum %>"]',
+      template:
+        '<%- baseUrl %>xs/<%- bookId %>/<%- chapterId %><% if(pageNum > 1) { %>_<%- pageNum %><% } %>.html',
+      nextPageSelector: 'a[href*="<%- chapterId %>_<%- pageNum %>.html"]',
       chapterContentSelector: '#content',
       pageNumStartIndex: 1
     }
