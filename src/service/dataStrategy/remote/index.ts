@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BookSourceType, type IChapter, type IRemoteBook } from '../../../db/types';
-import { render } from 'ejs';
+// @ts-expect-error 123
+const render = ejs.render;
 import { getTextWithNewlines } from './utils';
 const PROXY_BASE_URL = `https://api.xudashuai.online/?url=`;
 const parser = new DOMParser();
