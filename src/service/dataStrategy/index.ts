@@ -8,8 +8,8 @@ interface DataStrategy {
   fetchChapterList(bookId: string): Promise<IChapter[]>;
   fetchBook(bookId: string, payload: unknown): Promise<IBook>;
 }
-const BiquegeScraper = new ConfigurableScraper(config);
-const XingqiScraper = new ConfigurableScraper(xinqi);
+export const BiquegeScraper = new ConfigurableScraper(config);
+export const XingqiScraper = new ConfigurableScraper(xinqi);
 export function getScraper(url: string) {
   if (url.startsWith(BiquegeScraper.config.endpoints.baseUrl)) {
     return BiquegeScraper;

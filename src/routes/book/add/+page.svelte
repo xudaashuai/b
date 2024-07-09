@@ -2,11 +2,12 @@
 import { goto } from '$app/navigation';
 import { addBook, updateBook } from '../../../db/BookStore';
 import { addChapter } from '../../../db/ChapterStore';
-import { getScraper } from '../../../service/dataStrategy';
+import { BiquegeScraper, getScraper, XingqiScraper } from '../../../service/dataStrategy';
 import { ConfigurableScraper } from '../../../service/dataStrategy/remote';
 import config from '../../../service/dataStrategy/remote/config/biquge';
 import { processAndStoreFile } from '../../../service/FileProcessingService';
 let url = '45525';
+let scraperType = 'xingqi';
 function handleFileChange(event: any) {
   const file = event?.target.files[0];
   console.log(file);
@@ -25,9 +26,8 @@ function handleFileChange(event: any) {
 }
 
 async function importRemoteBook() {
-  const scraper = getScraper(url);
-  const bookId = scraper.getBookId(url);
-  const book = await scraper.fetchBook(bookId);
+  const scraper = scraperType === 'xingqi' ? XingqiScraper : BiquegeScraper;
+  const book = await scraper.fetchBook(url);
   await updateBook(book);
   const contents = await scraper.fetchChapterList(book.id);
   for (const item of contents) {
@@ -45,6 +45,10 @@ async function importRemoteBook() {
   <h1>Read Local Novel File</h1>
   <input type="file" id="fileInput" on:change={handleFileChange} />
   <div id="fileContent" style="white-space: pre-wrap; margin-top: 20px;"></div>
+  <select bind:value={scraperType}>
+    <option value="xingqi">xingqi</option>
+    <option value="biquge">biquge</option>
+  </select>
   <input type="text" bind:value={url} />
   <button on:click={importRemoteBook}>导入远程书</button>
 </section>
