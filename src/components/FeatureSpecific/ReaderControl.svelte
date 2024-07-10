@@ -3,13 +3,16 @@ import ContentsProgressPanel from './ContentsProgressPanel.svelte';
 
 import ContentsPanel from './ContentsPanel.svelte';
 
-import { createEventDispatcher, setContext, tick } from 'svelte';
+import { createEventDispatcher, getContext, setContext, tick } from 'svelte';
 import { goto } from '$app/navigation';
 
 import { settingsStore, nightModeStore, styleSettingsStore } from '../../store/settings';
 import SettingsPanel from './SettingsPanel.svelte';
 import Icon from '../UI/Icon.svelte';
-import { writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
+import type { IBook, IChapter, IRemoteBook } from '../../db/types';
+import { getChaptersByBookId } from '../../db/ChapterStore';
+import { fetchChapter } from '../../service/ChapterService';
 
 const dispatch = createEventDispatcher<{
   nextPage: null;
@@ -19,12 +22,40 @@ const dispatch = createEventDispatcher<{
   gotoChapter: number;
   move: number;
   end: number;
+  downloadBook: number;
 }>();
 
 export let totalChapterNumber: number;
 export let currentChapterNumber: number;
 let showMenu: boolean = false;
 let modalType: string = '';
+
+const bookStore = getContext<Writable<IBook>>('book');
+const chapterStore = getContext<Writable<IChapter[]>>('chapters');
+let downloading = false;
+let cachedChapterNumber = $chapterStore.filter((i) => i.content).length;
+
+async function download() {
+  let chapters = await getChaptersByBookId($bookStore.id);
+  let chapter: IChapter | undefined;
+  for (chapter of chapters) {
+    if (!chapter.content) {
+      chapter = await fetchChapter(
+        chapter,
+        $bookStore.source,
+        ($bookStore as IRemoteBook).remoteUrl
+      );
+      if (chapter?.content) {
+        cachedChapterNumber++;
+      }
+    }
+    if (chapter?.content) {
+      console.log('load success', chapter.chapterNumber);
+    } else {
+      console.log('load failed', chapter?.chapterNumber);
+    }
+  }
+}
 
 function handlePageClick(event: MouseEvent) {
   const { clientX, clientY } = event;
@@ -86,12 +117,20 @@ function onBackButtonClick() {
     <div class="container">
       {#if !modalType}
         <div class="navbar">
-          <div class="button" on:click={onBackButtonClick} on:touchstart={onTouchStart}>
+          <div class="button" on:click={onBackButtonClick}>
             <Icon class="icon" name="back" />
           </div>
         </div>
       {/if}
       <div class="modal" class:modal-shadow={modalType} on:click|self={closeMenu}>
+        {#if $bookStore.source === 'remote'}
+          <div class="download" on:click={download}>
+            <div class="button">
+              <Icon class="icon" name="download" />
+            </div>
+            {cachedChapterNumber}/{$bookStore.totalChapters}
+          </div>
+        {/if}
         {#if modalType === 'contents'}
           <ContentsPanel
             on:gotoChapter={(e) => {
@@ -181,6 +220,21 @@ function onBackButtonClick() {
   flex: 1;
   display: flex;
   align-items: end;
+  position: relative;
+}
+
+.download {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  height: 40px;
+  padding: 0 10px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-color);
+  box-shadow: 0px 0px 3px 3px rgba(0, 0, 0, 0.1);
 }
 
 .modal-shadow {
@@ -209,6 +263,7 @@ function onBackButtonClick() {
   background-color: var(--bg-color);
   padding: 8px 20px;
   border-bottom: 1px solid var(--border-color);
+  justify-content: space-between;
 }
 .button {
   padding: 12px 0;
