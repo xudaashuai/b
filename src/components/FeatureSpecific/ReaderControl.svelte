@@ -67,6 +67,8 @@ function handlePageClick(event: MouseEvent) {
 
   if (Math.abs(xPercentage - 50) + Math.abs(yPercentage - 50) < 30) {
     showMenu = true;
+    // @ts-expect-error 123
+    window.vConsole.showSwitch();
   } else if (100 - xPercentage < $styleSettingsStore.nextPageArea) {
     dispatch('nextPage');
   } else {
@@ -95,6 +97,8 @@ function onTouchEnd(e: TouchEvent) {
 }
 
 function closeMenu() {
+  // @ts-expect-error 123
+  window.vConsole.hideSwitch();
   showMenu = false;
   modalType = '';
 }
