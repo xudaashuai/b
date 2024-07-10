@@ -37,6 +37,7 @@ let cachedChapterNumber = $chapterStore.filter((i) => i.content).length;
 
 async function download() {
   let chapters = await getChaptersByBookId($bookStore.id);
+  cachedChapterNumber = $chapterStore.filter((i) => i.content).length;
   let chapter: IChapter | undefined;
   for (chapter of chapters) {
     if (!chapter.content) {
