@@ -12,10 +12,6 @@ onMount(async () => {
 </script>
 
 <div class="container">
-  <select bind:value={scraperType}>
-    <option value="xingqi">xingqi</option>
-    <option value="biquge">biquge</option>
-  </select>
   <header class="header">
     <button class="button" on:click={() => goto('/search')}><Icon name="search" /></button>
     <button class="button" on:click={() => goto('/book/add')}>+</button>
