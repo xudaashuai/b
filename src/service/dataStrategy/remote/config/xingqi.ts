@@ -30,6 +30,10 @@ const config: ScraperConfig = {
       nextPageSelector: 'a[href*="<%- chapterId %>_<%- pageNum %>.html"]',
       chapterContentSelector: '#content',
       pageNumStartIndex: 1
+    },
+    search: {
+      template: '',
+      bookItemSelector: '#newscontent > div.l > ul > li > span.zi_n'
     }
   }
 };

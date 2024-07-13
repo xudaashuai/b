@@ -54,6 +54,12 @@ export class ConfigurableScraper {
     console.log('fetchHtml end', url, response);
     return parser.parseFromString(response.html, 'text/html');
   }
+
+  async searchBook(name: string): Promise<IRemoteBook> {
+    const params = {
+      baseUrl: this.config.endpoints.baseUrl
+    };
+  }
   async fetchBook(bookId: string): Promise<IRemoteBook> {
     console.log('fetchBook start', bookId);
 
@@ -205,6 +211,16 @@ export interface ScraperConfig {
       nextPageSelector: string;
       chapterContentSelector: string;
       pageNumStartIndex: number;
+    };
+    search: {
+      template: string;
+      bookItemSelector: string;
+      selectors: {
+        title: string;
+        author?: string;
+        coverUrl?: string;
+        description?: string;
+      };
     };
   };
 }
